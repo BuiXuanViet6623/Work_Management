@@ -1,4 +1,7 @@
-import { domains, type Domain } from '@/lib/data';
+
+'use client';
+
+import { domains as initialDomains, type Domain } from '@/lib/data';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
@@ -11,6 +14,7 @@ import {
     DropdownMenuLabel,
     DropdownMenuTrigger,
   } from '@/components/ui/dropdown-menu';
+import { useState } from 'react';
 
 const statusTranslations: { [key in Domain['status']]: string } = {
   active: 'Hoạt động',
@@ -33,6 +37,14 @@ const formatDate = (dateString: string) => {
 }
 
 export default function DomainsPage() {
+  const [domains, setDomains] = useState(initialDomains);
+
+  const handleDelete = (id: string) => {
+    if (confirm('Bạn có chắc chắn muốn xóa tên miền này không?')) {
+      setDomains(domains.filter(domain => domain.id !== id));
+    }
+  }
+
   return (
     <Card>
       <CardHeader className="flex-row items-center justify-between">
@@ -40,7 +52,7 @@ export default function DomainsPage() {
             <CardTitle>Quản lý Tên miền</CardTitle>
             <CardDescription>Theo dõi tất cả các tên miền đã đăng ký của bạn.</CardDescription>
         </div>
-        <Button>Thêm tên miền</Button>
+        <Button onClick={() => alert('Chức năng "Thêm tên miền" đang được phát triển.')}>Thêm tên miền</Button>
       </CardHeader>
       <CardContent>
         <Table>
@@ -76,9 +88,9 @@ export default function DomainsPage() {
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
                       <DropdownMenuLabel>Hành động</DropdownMenuLabel>
-                      <DropdownMenuItem>Gia hạn</DropdownMenuItem>
-                      <DropdownMenuItem>Chỉnh sửa</DropdownMenuItem>
-                      <DropdownMenuItem className="text-red-500">Xóa</DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => alert('Chức năng "Gia hạn" đang được phát triển.')}>Gia hạn</DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => alert('Chức năng "Chỉnh sửa" đang được phát triển.')}>Chỉnh sửa</DropdownMenuItem>
+                      <DropdownMenuItem className="text-red-500" onClick={() => handleDelete(domain.id)}>Xóa</DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </TableCell>

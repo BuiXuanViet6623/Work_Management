@@ -1,15 +1,17 @@
+
 'use client';
 
-import { servers, type Server } from '@/lib/data';
+import { servers as initialServers, type Server } from '@/lib/data';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { cn } from '@/lib/utils';
-import { Circle, EyeOff, Eye } from 'lucide-react';
+import { Circle, EyeOff, Eye, MoreHorizontal } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useState } from 'react';
 import CopyButton from '@/components/dashboard/copy-button';
+import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuLabel, DropdownMenuItem } from '@/components/ui/dropdown-menu';
 
 const statusTranslations: { [key in Server['status']]: string } = {
   online: 'trực tuyến',
@@ -33,6 +35,8 @@ const PasswordCell = ({ password }: { password?: string }) => {
 }
 
 export default function ServersPage() {
+  const [servers, setServers] = useState(initialServers);
+
   const getStatusBadgeVariant = (status: 'online' | 'warning' | 'offline'): 'default' | 'destructive' | 'secondary' => {
     switch (status) {
       case 'online':
@@ -52,11 +56,20 @@ export default function ServersPage() {
     }
   }
 
+  const handleDelete = (id: string) => {
+    if (confirm('Bạn có chắc chắn muốn xóa máy chủ này không?')) {
+      setServers(servers.filter(server => server.id !== id));
+    }
+  }
+
   return (
     <Card>
-      <CardHeader>
-        <CardTitle>Trạng thái máy chủ</CardTitle>
-        <CardDescription>Theo dõi trạng thái máy chủ, sử dụng tài nguyên và các chỉ số hiệu suất.</CardDescription>
+      <CardHeader className="flex-row items-center justify-between">
+        <div>
+          <CardTitle>Trạng thái máy chủ</CardTitle>
+          <CardDescription>Theo dõi trạng thái máy chủ, sử dụng tài nguyên và các chỉ số hiệu suất.</CardDescription>
+        </div>
+        <Button onClick={() => alert('Chức năng "Thêm máy chủ" đang được phát triển.')}>Thêm máy chủ</Button>
       </CardHeader>
       <CardContent>
         <Table>
@@ -69,6 +82,7 @@ export default function ServersPage() {
               <TableHead>Mật khẩu</TableHead>
               <TableHead>Sử dụng CPU</TableHead>
               <TableHead>Sử dụng RAM</TableHead>
+              <TableHead><span className="sr-only">Hành động</span></TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -105,6 +119,21 @@ export default function ServersPage() {
                     <Progress value={server.ramUsage} className="h-2 w-20" />
                     <span className="text-muted-foreground">{server.ramUsage}%</span>
                   </div>
+                </TableCell>
+                <TableCell>
+                <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button aria-haspopup="true" size="icon" variant="ghost">
+                        <MoreHorizontal className="h-4 w-4" />
+                        <span className="sr-only">Toggle menu</span>
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuLabel>Hành động</DropdownMenuLabel>
+                      <DropdownMenuItem onClick={() => alert('Chức năng "Chỉnh sửa" đang được phát triển.')}>Chỉnh sửa</DropdownMenuItem>
+                      <DropdownMenuItem className="text-red-500" onClick={() => handleDelete(server.id)}>Xóa</DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </TableCell>
               </TableRow>
             ))}

@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState } from 'react';
@@ -5,16 +6,19 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter }
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
-import { reports } from '@/lib/data';
+import { reports as initialReports, type Report } from '@/lib/data';
 import { Separator } from '@/components/ui/separator';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { MoreVertical } from 'lucide-react';
 
 export default function TasksPage() {
-  const [report, setReport] = useState('');
+  const [reportContent, setReportContent] = useState('');
+  const [reports, setReports] = useState(initialReports);
   const { toast } = useToast();
 
   const handleSubmit = () => {
-    if (report.trim() === '') {
+    if (reportContent.trim() === '') {
       toast({
         variant: 'destructive',
         title: 'Lỗi',
@@ -22,13 +26,27 @@ export default function TasksPage() {
       });
       return;
     }
-    console.log('End of day report submitted:', report);
+    
+    const newReport: Report = {
+      id: `report-${Date.now()}`,
+      date: new Date().toISOString(),
+      content: reportContent,
+    };
+
+    setReports([newReport, ...reports]);
+    setReportContent('');
+
     toast({
       title: 'Thành công',
       description: 'Báo cáo cuối ngày của bạn đã được gửi.',
     });
-    setReport('');
   };
+
+  const handleDelete = (id: string) => {
+    if (confirm('Bạn có chắc chắn muốn xóa báo cáo này không?')) {
+      setReports(reports.filter(r => r.id !== id));
+    }
+  }
 
   return (
     <div className="grid gap-8 md:grid-cols-2">
@@ -43,8 +61,8 @@ export default function TasksPage() {
           <Textarea
             placeholder="Hôm nay tôi đã hoàn thành..."
             className="min-h-[200px]"
-            value={report}
-            onChange={(e) => setReport(e.target.value)}
+            value={reportContent}
+            onChange={(e) => setReportContent(e.target.value)}
           />
         </CardContent>
         <CardFooter>
@@ -61,9 +79,24 @@ export default function TasksPage() {
                 <div className="space-y-4">
                     {reports.map((item, index) => (
                         <div key={item.id}>
-                            <div className="mb-2">
-                                <p className="font-semibold">{new Date(item.date).toLocaleDateString('vi-VN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
+                            <div className="mb-2 relative">
+                                <p className="font-semibold pr-8">{new Date(item.date).toLocaleDateString('vi-VN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
                                 <p className="text-sm text-muted-foreground">{item.content}</p>
+                                <div className="absolute top-0 right-0">
+                                    <DropdownMenu>
+                                        <DropdownMenuTrigger asChild>
+                                          <Button aria-haspopup="true" size="icon" variant="ghost">
+                                            <MoreVertical className="h-4 w-4" />
+                                            <span className="sr-only">Toggle menu</span>
+                                          </Button>
+                                        </DropdownMenuTrigger>
+                                        <DropdownMenuContent align="end">
+                                          <DropdownMenuLabel>Hành động</DropdownMenuLabel>
+                                          <DropdownMenuItem onClick={() => alert('Chức năng "Chỉnh sửa" đang được phát triển.')}>Chỉnh sửa</DropdownMenuItem>
+                                          <DropdownMenuItem className="text-red-500" onClick={() => handleDelete(item.id)}>Xóa</DropdownMenuItem>
+                                        </DropdownMenuContent>
+                                      </DropdownMenu>
+                                </div>
                             </div>
                             {index < reports.length - 1 && <Separator />}
                         </div>
