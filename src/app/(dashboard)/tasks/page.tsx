@@ -143,9 +143,8 @@ export default function TasksPage() {
 
 
   return (
-    <>
-      <div className="grid gap-8 md:grid-cols-3">
-        <Card className="md:col-span-2">
+    <div className="grid grid-cols-1 gap-6">
+      <Card>
           <CardHeader>
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
@@ -161,35 +160,36 @@ export default function TasksPage() {
               </div>
               <Button onClick={() => { setSelectedDay(new Date()); setCurrentMonth(format(new Date(), 'MMM-yyyy')); }}>Hôm nay</Button>
             </div>
-             <div className="grid grid-cols-7 mt-4 text-xs font-medium text-center text-muted-foreground">
-                <div>CN</div>
-                <div>T2</div>
-                <div>T3</div>
-                <div>T4</div>
-                <div>T5</div>
-                <div>T6</div>
-                <div>T7</div>
-            </div>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-7 gap-px">
+            <div className="grid grid-cols-7 text-xs font-medium text-center border-b text-muted-foreground">
+                <div className="py-2 border-t border-r">CN</div>
+                <div className="py-2 border-t border-r">T2</div>
+                <div className="py-2 border-t border-r">T3</div>
+                <div className="py-2 border-t border-r">T4</div>
+                <div className="py-2 border-t border-r">T5</div>
+                <div className="py-2 border-t border-r">T6</div>
+                <div className="py-2 border-t">T7</div>
+            </div>
+            <div className="grid grid-cols-7">
               {days.map((day, dayIdx) => {
                 const reportExists = reports.some(report => isSameDay(new Date(report.date), day));
                 return (
                   <div
                     key={day.toString()}
                     className={cn(
+                      "relative h-20 p-1 border-b border-r",
                       dayIdx === 0 && colStartClasses[getDay(day)],
-                      'relative py-2 px-1'
+                      getDay(day) === 6 && "border-r-0",
                     )}
                   >
                     <button
                       onClick={() => setSelectedDay(day)}
                       className={cn(
-                        'mx-auto flex h-10 w-10 items-center justify-center rounded-full transition-colors',
-                        isSameDay(day, selectedDay) && 'bg-primary text-primary-foreground',
-                        !isSameDay(day, selectedDay) && isToday(day) && 'bg-accent text-accent-foreground',
-                        !isSameDay(day, selectedDay) && !isToday(day) && 'hover:bg-accent'
+                        'flex h-8 w-8 items-center justify-center rounded-full text-sm transition-colors',
+                         isSameDay(day, selectedDay) && 'bg-primary font-semibold text-primary-foreground',
+                         !isSameDay(day, selectedDay) && isToday(day) && 'bg-accent text-accent-foreground',
+                         !isSameDay(day, selectedDay) && !isToday(day) && 'hover:bg-muted'
                       )}
                     >
                       <time dateTime={format(day, 'yyyy-MM-dd')}>
@@ -197,16 +197,16 @@ export default function TasksPage() {
                       </time>
                     </button>
                      {reportExists && (
-                        <div className="absolute bottom-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-sky-500"></div>
+                        <div className="absolute bottom-2 right-2 w-2 h-2 rounded-full bg-sky-500"></div>
                      )}
                   </div>
                 );
               })}
             </div>
           </CardContent>
-        </Card>
-
-        <Card>
+      </Card>
+      
+      <Card>
           <CardHeader>
             <CardTitle>Báo cáo ngày {format(selectedDay, 'dd/MM/yyyy')}</CardTitle>
             <CardDescription>
@@ -216,7 +216,7 @@ export default function TasksPage() {
           <CardContent>
             {selectedDayReport ? (
               <div className="space-y-4">
-                <div className="p-3 text-sm whitespace-pre-wrap border rounded-md bg-muted min-h-48">{selectedDayReport.content}</div>
+                <div className="p-4 text-sm whitespace-pre-wrap border rounded-lg bg-muted min-h-40">{selectedDayReport.content}</div>
                 <div className="flex gap-2">
                   <Button variant="outline" className="w-full" onClick={() => setEditingReport(selectedDayReport)}>
                     <Edit2 className="w-4 h-4 mr-2" /> Chỉnh sửa
@@ -231,16 +231,16 @@ export default function TasksPage() {
                 <Textarea
                   name="content"
                   placeholder="Hôm nay tôi đã hoàn thành..."
-                  className="min-h-[200px]"
+                  className="min-h-[160px]"
+                  required
                 />
                 <Button type="submit" className="w-full">Gửi báo cáo</Button>
               </form>
             )}
           </CardContent>
         </Card>
-      </div>
 
-       <Dialog open={!!editingReport} onOpenChange={(isOpen) => !isOpen && setEditingReport(null)}>
+      <Dialog open={!!editingReport} onOpenChange={(isOpen) => !isOpen && setEditingReport(null)}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Chỉnh sửa báo cáo</DialogTitle>
@@ -283,6 +283,6 @@ export default function TasksPage() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-    </>
+    </div>
   );
 }
