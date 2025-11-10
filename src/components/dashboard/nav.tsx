@@ -24,7 +24,7 @@ import { Separator } from '@/components/ui/separator';
 const navItems = [
   { href: '/', label: 'Bảng điều khiển', icon: LayoutDashboard },
   { href: '/servers', label: 'Máy chủ', icon: Server },
-  { href: '/tasks', label: 'Việc hằng ngày', icon: ClipboardList },
+  { href: '/tasks', label: 'Báo cáo cuối ngày', icon: ClipboardList },
   { href: '/templates', label: 'Mẫu', icon: FileCode2 },
   { href: '/notes', label: 'Ghi chú Code', icon: StickyNote },
 ];
