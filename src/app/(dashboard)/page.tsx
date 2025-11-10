@@ -1,7 +1,7 @@
 import { servers, tasks, type Task } from '@/lib/data';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { ArrowUp, CheckCircle, Server, AlertTriangle } from 'lucide-react';
+import { ArrowUp, Server, AlertTriangle, CircleCheckBig } from 'lucide-react';
 import OverviewCharts from '@/components/dashboard/overview-charts';
 
 const priorityTranslations: { [key in Task['priority']]: string } = {
@@ -39,7 +39,7 @@ export default function DashboardPage() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
             <CardTitle className="text-sm font-medium">Nhiệm vụ đã hoàn thành</CardTitle>
-            <CheckCircle className="w-4 h-4 text-muted-foreground" />
+            <CircleCheckBig className="w-4 h-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">+{tasksDone}</div>

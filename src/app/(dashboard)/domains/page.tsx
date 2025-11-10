@@ -1,4 +1,3 @@
-
 'use client';
 
 import { domains as initialDomains, type Domain } from '@/lib/data';
@@ -25,7 +24,11 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "@/components/ui/alert-dialog"
+} from "@/components/ui/alert-dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogClose } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 const statusTranslations: { [key in Domain['status']]: string } = {
   active: 'Hoạt động',
@@ -40,6 +43,14 @@ const statusVariants: { [key in Domain['status']]: 'default' | 'secondary' | 'de
 };
 
 const formatDate = (dateString: string) => {
+    try {
+        return new Date(dateString).toISOString().split('T')[0];
+    } catch (e) {
+        return dateString;
+    }
+}
+
+const formatDisplayDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('vi-VN', {
         year: 'numeric',
         month: 'long',
@@ -47,21 +58,62 @@ const formatDate = (dateString: string) => {
     });
 }
 
+
 export default function DomainsPage() {
   const [domains, setDomains] = useState(initialDomains);
+  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const [editingDomain, setEditingDomain] = useState<Domain | null>(null);
+  const [domainToDelete, setDomainToDelete] = useState<Domain | null>(null);
 
-  const handleDelete = (id: string) => {
-    setDomains(domains.filter(domain => domain.id !== id));
+  const handleAdd = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const formData = new FormData(event.currentTarget);
+    const newDomain: Domain = {
+      id: `domain-${Date.now()}`,
+      name: formData.get('name') as string,
+      provider: formData.get('provider') as string,
+      registrationDate: formData.get('registrationDate') as string,
+      expiryDate: formData.get('expiryDate') as string,
+      status: formData.get('status') as Domain['status'],
+    };
+    setDomains([newDomain, ...domains]);
+    setIsAddDialogOpen(false);
+  };
+
+  const handleEdit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (!editingDomain) return;
+
+    const formData = new FormData(event.currentTarget);
+    const updatedDomain: Domain = {
+      ...editingDomain,
+      name: formData.get('name') as string,
+      provider: formData.get('provider') as string,
+      registrationDate: formData.get('registrationDate') as string,
+      expiryDate: formData.get('expiryDate') as string,
+      status: formData.get('status') as Domain['status'],
+    };
+    
+    setDomains(domains.map(d => d.id === editingDomain.id ? updatedDomain : d));
+    setEditingDomain(null);
+  };
+
+
+  const handleDelete = () => {
+    if (!domainToDelete) return;
+    setDomains(domains.filter(domain => domain.id !== domainToDelete.id));
+    setDomainToDelete(null);
   }
 
   return (
+    <>
     <Card>
       <CardHeader className="flex-row items-center justify-between">
         <div>
             <CardTitle>Quản lý Tên miền</CardTitle>
             <CardDescription>Theo dõi tất cả các tên miền đã đăng ký của bạn.</CardDescription>
         </div>
-        <Button onClick={() => alert('Chức năng "Thêm tên miền" đang được phát triển.')}>
+        <Button onClick={() => setIsAddDialogOpen(true)}>
             <PlusCircle className="mr-2 h-4 w-4" />
             Thêm tên miền
         </Button>
@@ -83,8 +135,8 @@ export default function DomainsPage() {
               <TableRow key={domain.id}>
                 <TableCell className="font-medium">{domain.name}</TableCell>
                 <TableCell>{domain.provider}</TableCell>
-                <TableCell>{formatDate(domain.registrationDate)}</TableCell>
-                <TableCell>{formatDate(domain.expiryDate)}</TableCell>
+                <TableCell>{formatDisplayDate(domain.registrationDate)}</TableCell>
+                <TableCell>{formatDisplayDate(domain.expiryDate)}</TableCell>
                 <TableCell>
                   <Badge variant={statusVariants[domain.status]}>
                     {statusTranslations[domain.status]}
@@ -101,24 +153,8 @@ export default function DomainsPage() {
                     <DropdownMenuContent align="end">
                       <DropdownMenuLabel>Hành động</DropdownMenuLabel>
                       <DropdownMenuItem onClick={() => alert('Chức năng "Gia hạn" đang được phát triển.')}>Gia hạn</DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => alert('Chức năng "Chỉnh sửa" đang được phát triển.')}>Chỉnh sửa</DropdownMenuItem>
-                      <AlertDialog>
-                        <AlertDialogTrigger asChild>
-                           <DropdownMenuItem onSelect={(e) => e.preventDefault()} className="text-destructive hover:text-destructive">Xóa</DropdownMenuItem>
-                        </AlertDialogTrigger>
-                        <AlertDialogContent>
-                          <AlertDialogHeader>
-                            <AlertDialogTitle>Bạn có chắc chắn muốn xóa không?</AlertDialogTitle>
-                            <AlertDialogDescription>
-                              Hành động này không thể được hoàn tác. Thao tác này sẽ xóa vĩnh viễn tên miền khỏi hệ thống.
-                            </AlertDialogDescription>
-                          </AlertDialogHeader>
-                          <AlertDialogFooter>
-                            <AlertDialogCancel>Hủy</AlertDialogCancel>
-                            <AlertDialogAction onClick={() => handleDelete(domain.id)} className="bg-destructive hover:bg-destructive/90">Xóa</AlertDialogAction>
-                          </AlertDialogFooter>
-                        </AlertDialogContent>
-                      </AlertDialog>
+                      <DropdownMenuItem onClick={() => setEditingDomain(domain)}>Chỉnh sửa</DropdownMenuItem>
+                       <DropdownMenuItem onSelect={(e) => e.preventDefault()} onClick={() => setDomainToDelete(domain)} className="text-destructive hover:text-destructive">Xóa</DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </TableCell>
@@ -128,5 +164,118 @@ export default function DomainsPage() {
         </Table>
       </CardContent>
     </Card>
+
+    {/* Add/Edit Dialogs */}
+    <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Thêm tên miền mới</DialogTitle>
+            <DialogDescription>Nhập thông tin chi tiết cho tên miền mới.</DialogDescription>
+          </DialogHeader>
+          <form onSubmit={handleAdd}>
+            <div className="grid gap-4 py-4">
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="name" className="text-right">Tên miền</Label>
+                <Input id="name" name="name" className="col-span-3" required />
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="provider" className="text-right">Nhà cung cấp</Label>
+                <Input id="provider" name="provider" className="col-span-3" required />
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="registrationDate" className="text-right">Ngày đăng ký</Label>
+                <Input id="registrationDate" name="registrationDate" type="date" className="col-span-3" required />
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="expiryDate" className="text-right">Ngày hết hạn</Label>
+                <Input id="expiryDate" name="expiryDate" type="date" className="col-span-3" required />
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="status" className="text-right">Trạng thái</Label>
+                 <Select name="status" required>
+                    <SelectTrigger className="col-span-3">
+                        <SelectValue placeholder="Chọn trạng thái" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="active">Hoạt động</SelectItem>
+                        <SelectItem value="expiring_soon">Sắp hết hạn</SelectItem>
+                        <SelectItem value="expired">Đã hết hạn</SelectItem>
+                    </SelectContent>
+                </Select>
+              </div>
+            </div>
+            <DialogFooter>
+              <DialogClose asChild>
+                <Button type="button" variant="outline">Hủy</Button>
+              </DialogClose>
+              <Button type="submit">Lưu</Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
+    
+      <Dialog open={!!editingDomain} onOpenChange={(isOpen) => !isOpen && setEditingDomain(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Chỉnh sửa tên miền</DialogTitle>
+            <DialogDescription>Cập nhật thông tin chi tiết cho tên miền.</DialogDescription>
+          </DialogHeader>
+          <form onSubmit={handleEdit}>
+            <div className="grid gap-4 py-4">
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="name-edit" className="text-right">Tên miền</Label>
+                <Input id="name-edit" name="name" className="col-span-3" defaultValue={editingDomain?.name} required />
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="provider-edit" className="text-right">Nhà cung cấp</Label>
+                <Input id="provider-edit" name="provider" className="col-span-3" defaultValue={editingDomain?.provider} required />
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="registrationDate-edit" className="text-right">Ngày đăng ký</Label>
+                <Input id="registrationDate-edit" name="registrationDate" type="date" className="col-span-3" defaultValue={formatDate(editingDomain?.registrationDate ?? '')} required />
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="expiryDate-edit" className="text-right">Ngày hết hạn</Label>
+                <Input id="expiryDate-edit" name="expiryDate" type="date" className="col-span-3" defaultValue={formatDate(editingDomain?.expiryDate ?? '')} required />
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="status-edit" className="text-right">Trạng thái</Label>
+                 <Select name="status" defaultValue={editingDomain?.status} required>
+                    <SelectTrigger className="col-span-3">
+                        <SelectValue placeholder="Chọn trạng thái" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="active">Hoạt động</SelectItem>
+                        <SelectItem value="expiring_soon">Sắp hết hạn</SelectItem>
+                        <SelectItem value="expired">Đã hết hạn</SelectItem>
+                    </SelectContent>
+                </Select>
+              </div>
+            </div>
+            <DialogFooter>
+              <DialogClose asChild>
+                <Button type="button" variant="outline" onClick={() => setEditingDomain(null)}>Hủy</Button>
+              </DialogClose>
+              <Button type="submit">Lưu thay đổi</Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
+    
+      <AlertDialog open={!!domainToDelete} onOpenChange={(isOpen) => !isOpen && setDomainToDelete(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Bạn có chắc chắn muốn xóa không?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Hành động này không thể được hoàn tác. Thao tác này sẽ xóa vĩnh viễn tên miền khỏi hệ thống.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setDomainToDelete(null)}>Hủy</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDelete} className="bg-destructive hover:bg-destructive/90">Xóa</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </>
   );
 }
