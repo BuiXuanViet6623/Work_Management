@@ -114,8 +114,8 @@ export default function ServersPage() {
                 <TableHead>Địa chỉ IP</TableHead>
                 <TableHead>Tên đăng nhập</TableHead>
                 <TableHead>Mật khẩu</TableHead>
-                <TableHead>Sử dụng CPU</TableHead>
-                <TableHead>Sử dụng RAM</TableHead>
+                <TableHead className="w-[150px]">Sử dụng CPU</TableHead>
+                <TableHead className="w-[150px]">Sử dụng RAM</TableHead>
                 <TableHead><span className="sr-only">Hành động</span></TableHead>
               </TableRow>
             </TableHeader>
@@ -144,14 +144,14 @@ export default function ServersPage() {
                   <PasswordCell password="password" />
                   <TableCell>
                     <div className="flex items-center gap-2">
-                      <Progress value={server.cpuUsage} className="h-2 w-20" />
-                      <span className="text-muted-foreground">{server.cpuUsage}%</span>
+                      <Progress value={server.cpuUsage} className="h-2 w-16" />
+                      <span className="text-muted-foreground text-xs">{server.cpuUsage}%</span>
                     </div>
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center gap-2">
-                      <Progress value={server.ramUsage} className="h-2 w-20" />
-                      <span className="text-muted-foreground">{server.ramUsage}%</span>
+                      <Progress value={server.ramUsage} className="h-2 w-16" />
+                      <span className="text-muted-foreground text-xs">{server.ramUsage}%</span>
                     </div>
                   </TableCell>
                   <TableCell>
