@@ -104,7 +104,7 @@ export default function DomainsPage() {
                       <DropdownMenuItem onClick={() => alert('Chức năng "Chỉnh sửa" đang được phát triển.')}>Chỉnh sửa</DropdownMenuItem>
                       <AlertDialog>
                         <AlertDialogTrigger asChild>
-                           <DropdownMenuItem onSelect={(e) => e.preventDefault()} className="text-red-500">Xóa</DropdownMenuItem>
+                           <DropdownMenuItem onSelect={(e) => e.preventDefault()} className="text-destructive hover:text-destructive">Xóa</DropdownMenuItem>
                         </AlertDialogTrigger>
                         <AlertDialogContent>
                           <AlertDialogHeader>
@@ -115,7 +115,7 @@ export default function DomainsPage() {
                           </AlertDialogHeader>
                           <AlertDialogFooter>
                             <AlertDialogCancel>Hủy</AlertDialogCancel>
-                            <AlertDialogAction onClick={() => handleDelete(domain.id)}>Xóa</AlertDialogAction>
+                            <AlertDialogAction onClick={() => handleDelete(domain.id)} className="bg-destructive hover:bg-destructive/90">Xóa</AlertDialogAction>
                           </AlertDialogFooter>
                         </AlertDialogContent>
                       </AlertDialog>

@@ -126,7 +126,7 @@ export default function ServersPage() {
                       <DropdownMenuItem onClick={() => alert('Chức năng "Chỉnh sửa" đang được phát triển.')}>Chỉnh sửa</DropdownMenuItem>
                        <AlertDialog>
                         <AlertDialogTrigger asChild>
-                           <DropdownMenuItem onSelect={(e) => e.preventDefault()} className="text-red-500">Xóa</DropdownMenuItem>
+                           <DropdownMenuItem onSelect={(e) => e.preventDefault()} className="text-destructive hover:text-destructive">Xóa</DropdownMenuItem>
                         </AlertDialogTrigger>
                         <AlertDialogContent>
                           <AlertDialogHeader>
@@ -137,7 +137,7 @@ export default function ServersPage() {
                           </AlertDialogHeader>
                           <AlertDialogFooter>
                             <AlertDialogCancel>Hủy</AlertDialogCancel>
-                            <AlertDialogAction onClick={() => handleDelete(server.id)}>Xóa</AlertDialogAction>
+                            <AlertDialogAction onClick={() => handleDelete(server.id)} className="bg-destructive hover:bg-destructive/90">Xóa</AlertDialogAction>
                           </AlertDialogFooter>
                         </AlertDialogContent>
                       </AlertDialog>
