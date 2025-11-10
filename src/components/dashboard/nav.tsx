@@ -44,7 +44,7 @@ export default function Nav() {
       </SidebarHeader>
       <Separator />
       <SidebarContent>
-        <SidebarMenu>
+        <SidebarMenu className="w-full">
           {navItems.map((item) => (
             <SidebarMenuItem key={item.href}>
               <Link href={item.href} legacyBehavior passHref>
@@ -52,6 +52,7 @@ export default function Nav() {
                   asChild
                   isActive={pathname === item.href}
                   tooltip={item.label}
+                  className="w-full justify-start"
                 >
                   <a>
                     <item.icon />
