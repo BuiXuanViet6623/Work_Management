@@ -7,15 +7,24 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { useState } from 'react';
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuLabel, DropdownMenuItem } from '@/components/ui/dropdown-menu';
-import { MoreVertical } from 'lucide-react';
+import { MoreVertical, PlusCircle } from 'lucide-react';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
 
 export default function NotesPage() {
   const [notes, setNotes] = useState(initialNotes);
 
   const handleDelete = (id: string) => {
-    if (confirm('Bạn có chắc chắn muốn xóa ghi chú này không?')) {
-      setNotes(notes.filter(note => note.id !== id));
-    }
+    setNotes(notes.filter(note => note.id !== id));
   }
 
   return (
@@ -25,7 +34,10 @@ export default function NotesPage() {
                 <h1 className="text-2xl font-bold tracking-tight">Ghi chú Code Snippet</h1>
                 <p className="text-muted-foreground">Thư viện cá nhân của bạn về các đoạn mã và ghi chú nhanh.</p>
             </div>
-            <Button onClick={() => alert('Chức năng "Thêm ghi chú mới" đang được phát triển.')}>Thêm ghi chú mới</Button>
+            <Button onClick={() => alert('Chức năng "Thêm ghi chú mới" đang được phát triển.')}>
+                <PlusCircle className="mr-2 h-4 w-4" />
+                Thêm ghi chú mới
+            </Button>
         </div>
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {notes.map((note) => (
@@ -52,7 +64,23 @@ export default function NotesPage() {
                     <DropdownMenuContent align="end">
                       <DropdownMenuLabel>Hành động</DropdownMenuLabel>
                       <DropdownMenuItem onClick={() => alert('Chức năng "Chỉnh sửa" đang được phát triển.')}>Chỉnh sửa</DropdownMenuItem>
-                      <DropdownMenuItem className="text-red-500" onClick={() => handleDelete(note.id)}>Xóa</DropdownMenuItem>
+                       <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                           <DropdownMenuItem onSelect={(e) => e.preventDefault()} className="text-red-500">Xóa</DropdownMenuItem>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>Bạn có chắc chắn muốn xóa không?</AlertDialogTitle>
+                            <AlertDialogDescription>
+                              Hành động này không thể được hoàn tác. Thao tác này sẽ xóa vĩnh viễn ghi chú này.
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>Hủy</AlertDialogCancel>
+                            <AlertDialogAction onClick={() => handleDelete(note.id)}>Xóa</AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
                     </DropdownMenuContent>
                   </DropdownMenu>
             </div>

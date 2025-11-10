@@ -7,11 +7,22 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { cn } from '@/lib/utils';
-import { Circle, EyeOff, Eye, MoreHorizontal } from 'lucide-react';
+import { Circle, EyeOff, Eye, MoreHorizontal, PlusCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useState } from 'react';
 import CopyButton from '@/components/dashboard/copy-button';
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuLabel, DropdownMenuItem } from '@/components/ui/dropdown-menu';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
 
 const statusTranslations: { [key in Server['status']]: string } = {
   online: 'trực tuyến',
@@ -37,29 +48,8 @@ const PasswordCell = ({ password }: { password?: string }) => {
 export default function ServersPage() {
   const [servers, setServers] = useState(initialServers);
 
-  const getStatusBadgeVariant = (status: 'online' | 'warning' | 'offline'): 'default' | 'destructive' | 'secondary' => {
-    switch (status) {
-      case 'online':
-        return 'default';
-      case 'warning':
-        return 'secondary';
-      case 'offline':
-        return 'destructive';
-    }
-  };
-
-  const getStatusColor = (status: 'online' | 'warning' | 'offline') => {
-    switch (status) {
-        case 'online': return 'text-green-500';
-        case 'warning': return 'text-yellow-500';
-        case 'offline': return 'text-red-500';
-    }
-  }
-
   const handleDelete = (id: string) => {
-    if (confirm('Bạn có chắc chắn muốn xóa máy chủ này không?')) {
-      setServers(servers.filter(server => server.id !== id));
-    }
+    setServers(servers.filter(server => server.id !== id));
   }
 
   return (
@@ -69,7 +59,10 @@ export default function ServersPage() {
           <CardTitle>Trạng thái máy chủ</CardTitle>
           <CardDescription>Theo dõi trạng thái máy chủ, sử dụng tài nguyên và các chỉ số hiệu suất.</CardDescription>
         </div>
-        <Button onClick={() => alert('Chức năng "Thêm máy chủ" đang được phát triển.')}>Thêm máy chủ</Button>
+        <Button onClick={() => alert('Chức năng "Thêm máy chủ" đang được phát triển.')}>
+            <PlusCircle className="mr-2 h-4 w-4" />
+            Thêm máy chủ
+        </Button>
       </CardHeader>
       <CardContent>
         <Table>
@@ -131,7 +124,23 @@ export default function ServersPage() {
                     <DropdownMenuContent align="end">
                       <DropdownMenuLabel>Hành động</DropdownMenuLabel>
                       <DropdownMenuItem onClick={() => alert('Chức năng "Chỉnh sửa" đang được phát triển.')}>Chỉnh sửa</DropdownMenuItem>
-                      <DropdownMenuItem className="text-red-500" onClick={() => handleDelete(server.id)}>Xóa</DropdownMenuItem>
+                       <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                           <DropdownMenuItem onSelect={(e) => e.preventDefault()} className="text-red-500">Xóa</DropdownMenuItem>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>Bạn có chắc chắn muốn xóa không?</AlertDialogTitle>
+                            <AlertDialogDescription>
+                              Hành động này không thể được hoàn tác. Thao tác này sẽ xóa vĩnh viễn máy chủ khỏi hệ thống.
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>Hủy</AlertDialogCancel>
+                            <AlertDialogAction onClick={() => handleDelete(server.id)}>Xóa</AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </TableCell>
@@ -142,4 +151,24 @@ export default function ServersPage() {
       </CardContent>
     </Card>
   );
+  
+  function getStatusBadgeVariant(status: 'online' | 'warning' | 'offline'): 'default' | 'destructive' | 'secondary' {
+    switch (status) {
+      case 'online':
+        return 'default';
+      case 'warning':
+        return 'secondary';
+      case 'offline':
+        return 'destructive';
+    }
+  };
+
+  function getStatusColor(status: 'online' | 'warning' | 'offline') {
+    switch (status) {
+        case 'online': return 'text-green-500';
+        case 'warning': return 'text-yellow-500';
+        case 'offline': return 'text-red-500';
+    }
+  }
 }
+

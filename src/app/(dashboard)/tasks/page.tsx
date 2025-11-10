@@ -11,6 +11,17 @@ import { Separator } from '@/components/ui/separator';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { MoreVertical } from 'lucide-react';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
 
 export default function TasksPage() {
   const [reportContent, setReportContent] = useState('');
@@ -43,9 +54,7 @@ export default function TasksPage() {
   };
 
   const handleDelete = (id: string) => {
-    if (confirm('Bạn có chắc chắn muốn xóa báo cáo này không?')) {
-      setReports(reports.filter(r => r.id !== id));
-    }
+    setReports(reports.filter(r => r.id !== id));
   }
 
   return (
@@ -93,7 +102,23 @@ export default function TasksPage() {
                                         <DropdownMenuContent align="end">
                                           <DropdownMenuLabel>Hành động</DropdownMenuLabel>
                                           <DropdownMenuItem onClick={() => alert('Chức năng "Chỉnh sửa" đang được phát triển.')}>Chỉnh sửa</DropdownMenuItem>
-                                          <DropdownMenuItem className="text-red-500" onClick={() => handleDelete(item.id)}>Xóa</DropdownMenuItem>
+                                          <AlertDialog>
+                                            <AlertDialogTrigger asChild>
+                                               <DropdownMenuItem onSelect={(e) => e.preventDefault()} className="text-red-500">Xóa</DropdownMenuItem>
+                                            </AlertDialogTrigger>
+                                            <AlertDialogContent>
+                                              <AlertDialogHeader>
+                                                <AlertDialogTitle>Bạn có chắc chắn muốn xóa không?</AlertDialogTitle>
+                                                <AlertDialogDescription>
+                                                  Hành động này không thể được hoàn tác. Thao tác này sẽ xóa vĩnh viễn báo cáo này.
+                                                </AlertDialogDescription>
+                                              </AlertDialogHeader>
+                                              <AlertDialogFooter>
+                                                <AlertDialogCancel>Hủy</AlertDialogCancel>
+                                                <AlertDialogAction onClick={() => handleDelete(item.id)}>Xóa</AlertDialogAction>
+                                              </AlertDialogFooter>
+                                            </AlertDialogContent>
+                                          </AlertDialog>
                                         </DropdownMenuContent>
                                       </DropdownMenu>
                                 </div>
