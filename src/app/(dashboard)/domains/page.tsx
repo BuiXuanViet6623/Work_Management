@@ -1,10 +1,11 @@
+
 'use client';
 
 import { domains as initialDomains, type Domain } from '@/lib/data';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
-import { MoreHorizontal, PlusCircle } from 'lucide-react';
+import { MoreHorizontal, PlusCircle, Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
     DropdownMenu,
@@ -13,7 +14,7 @@ import {
     DropdownMenuLabel,
     DropdownMenuTrigger,
   } from '@/components/ui/dropdown-menu';
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -23,7 +24,6 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogClose } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
@@ -61,9 +61,17 @@ const formatDisplayDate = (dateString: string) => {
 
 export default function DomainsPage() {
   const [domains, setDomains] = useState(initialDomains);
+  const [searchTerm, setSearchTerm] = useState('');
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [editingDomain, setEditingDomain] = useState<Domain | null>(null);
   const [domainToDelete, setDomainToDelete] = useState<Domain | null>(null);
+
+  const filteredDomains = useMemo(() => {
+    return domains.filter(domain =>
+      domain.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      domain.provider.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  }, [domains, searchTerm]);
 
   const handleAdd = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -108,15 +116,29 @@ export default function DomainsPage() {
   return (
     <>
     <Card>
-      <CardHeader className="flex-row items-center justify-between">
-        <div>
-            <CardTitle>Quản lý Tên miền</CardTitle>
-            <CardDescription>Theo dõi tất cả các tên miền đã đăng ký của bạn.</CardDescription>
+      <CardHeader>
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+                <CardTitle>Quản lý Tên miền</CardTitle>
+                <CardDescription>Theo dõi tất cả các tên miền đã đăng ký của bạn.</CardDescription>
+            </div>
+            <div className="flex gap-2">
+                <div className="relative">
+                    <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                    <Input
+                        type="search"
+                        placeholder="Tìm kiếm tên miền..."
+                        className="pl-8 sm:w-[200px] md:w-[300px]"
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                    />
+                </div>
+                <Button onClick={() => setIsAddDialogOpen(true)}>
+                    <PlusCircle className="mr-2 h-4 w-4" />
+                    Thêm tên miền
+                </Button>
+            </div>
         </div>
-        <Button onClick={() => setIsAddDialogOpen(true)}>
-            <PlusCircle className="mr-2 h-4 w-4" />
-            Thêm tên miền
-        </Button>
       </CardHeader>
       <CardContent>
         <Table>
@@ -131,7 +153,7 @@ export default function DomainsPage() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {domains.map((domain) => (
+            {filteredDomains.map((domain) => (
               <TableRow key={domain.id}>
                 <TableCell className="font-medium">{domain.name}</TableCell>
                 <TableCell>{domain.provider}</TableCell>
@@ -154,7 +176,7 @@ export default function DomainsPage() {
                       <DropdownMenuLabel>Hành động</DropdownMenuLabel>
                       <DropdownMenuItem onClick={() => alert('Chức năng "Gia hạn" đang được phát triển.')}>Gia hạn</DropdownMenuItem>
                       <DropdownMenuItem onClick={() => setEditingDomain(domain)}>Chỉnh sửa</DropdownMenuItem>
-                       <DropdownMenuItem onSelect={(e) => e.preventDefault()} onClick={() => setDomainToDelete(domain)} className="text-destructive hover:text-destructive">Xóa</DropdownMenuItem>
+                       <DropdownMenuItem onSelect={(e) => e.preventDefault()} onClick={() => setDomainToDelete(domain)} className="text-destructive focus:text-destructive focus:bg-destructive/10">Xóa</DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </TableCell>

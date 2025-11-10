@@ -1,3 +1,4 @@
+
 'use client';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -19,7 +20,6 @@ const pageTitles: { [key: string]: string } = {
   '/': 'Tổng quan Bảng điều khiển',
   '/servers': 'Quản lý Máy chủ',
   '/tasks': 'Báo cáo cuối ngày',
-  '/templates': 'Mẫu & AI Hub',
   '/notes': 'Ghi chú Code Snippet',
   '/domains': 'Quản lý Tên miền',
 };

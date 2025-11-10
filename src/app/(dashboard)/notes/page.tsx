@@ -1,12 +1,13 @@
+
 'use client';
 
 import { notes as initialNotes, type Note } from '@/lib/data';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuLabel, DropdownMenuItem } from '@/components/ui/dropdown-menu';
-import { MoreVertical, PlusCircle } from 'lucide-react';
+import { MoreVertical, PlusCircle, Search } from 'lucide-react';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -26,9 +27,17 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 
 export default function NotesPage() {
   const [notes, setNotes] = useState(initialNotes);
+  const [searchTerm, setSearchTerm] = useState('');
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [editingNote, setEditingNote] = useState<Note | null>(null);
   const [noteToDelete, setNoteToDelete] = useState<Note | null>(null);
+
+  const filteredNotes = useMemo(() => {
+    return notes.filter(note =>
+      note.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      note.content.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  }, [notes, searchTerm]);
 
   const handleAdd = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -68,45 +77,57 @@ export default function NotesPage() {
   return (
     <>
     <div>
-        <div className="flex items-center justify-between mb-6">
+        <div className="flex flex-col gap-4 mb-6 sm:flex-row sm:items-center sm:justify-between">
             <div>
                 <h1 className="text-2xl font-bold tracking-tight">Ghi chú Code Snippet</h1>
                 <p className="text-muted-foreground">Thư viện cá nhân của bạn về các đoạn mã và ghi chú nhanh.</p>
             </div>
-            <Button onClick={() => setIsAddDialogOpen(true)}>
-                <PlusCircle className="mr-2 h-4 w-4" />
-                Thêm ghi chú mới
-            </Button>
+             <div className="flex gap-2">
+                <div className="relative">
+                    <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                    <Input
+                        type="search"
+                        placeholder="Tìm kiếm ghi chú..."
+                        className="pl-8 sm:w-[200px] md:w-[300px]"
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                    />
+                </div>
+                <Button onClick={() => setIsAddDialogOpen(true)}>
+                    <PlusCircle className="mr-2 h-4 w-4" />
+                    Thêm ghi chú
+                </Button>
+            </div>
         </div>
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {notes.map((note) => (
-            <Card key={note.id} className="relative">
-            <CardHeader>
-                <CardTitle>{note.title}</CardTitle>
-                <CardDescription>
-                <Badge variant="outline" className="capitalize">{note.language}</Badge>
-                </CardDescription>
-            </CardHeader>
-            <CardContent>
-                <pre className="p-3 text-sm rounded-md bg-muted text-muted-foreground overflow-x-auto">
-                <code>{note.content}</code>
-                </pre>
-            </CardContent>
-            <div className="absolute top-4 right-2">
-                <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button aria-haspopup="true" size="icon" variant="ghost">
-                        <MoreVertical className="h-4 w-4" />
-                        <span className="sr-only">Toggle menu</span>
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      <DropdownMenuLabel>Hành động</DropdownMenuLabel>
-                      <DropdownMenuItem onClick={() => setEditingNote(note)}>Chỉnh sửa</DropdownMenuItem>
-                      <DropdownMenuItem onSelect={(e) => e.preventDefault()} onClick={() => setNoteToDelete(note)} className="text-destructive hover:text-destructive">Xóa</DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-            </div>
+        {filteredNotes.map((note) => (
+            <Card key={note.id} className="relative flex flex-col">
+              <CardHeader>
+                  <CardTitle>{note.title}</CardTitle>
+                  <CardDescription>
+                  <Badge variant="outline" className="capitalize">{note.language}</Badge>
+                  </CardDescription>
+              </CardHeader>
+              <CardContent className="flex-grow">
+                  <pre className="p-3 h-full text-sm rounded-md bg-muted text-muted-foreground overflow-x-auto">
+                  <code>{note.content}</code>
+                  </pre>
+              </CardContent>
+              <div className="absolute top-2 right-2">
+                  <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button aria-haspopup="true" size="icon" variant="ghost">
+                          <MoreVertical className="h-4 w-4" />
+                          <span className="sr-only">Toggle menu</span>
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuLabel>Hành động</DropdownMenuLabel>
+                        <DropdownMenuItem onClick={() => setEditingNote(note)}>Chỉnh sửa</DropdownMenuItem>
+                        <DropdownMenuItem onSelect={(e) => e.preventDefault()} onClick={() => setNoteToDelete(note)} className="text-destructive focus:text-destructive focus:bg-destructive/10">Xóa</DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+              </div>
             </Card>
         ))}
         </div>

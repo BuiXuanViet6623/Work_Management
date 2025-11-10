@@ -1,3 +1,4 @@
+
 'use client';
 
 import { servers as initialServers, type Server } from '@/lib/data';
@@ -6,9 +7,9 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { cn } from '@/lib/utils';
-import { Circle, EyeOff, Eye, MoreHorizontal, PlusCircle } from 'lucide-react';
+import { Circle, EyeOff, Eye, MoreHorizontal, PlusCircle, Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import CopyButton from '@/components/dashboard/copy-button';
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuLabel, DropdownMenuItem } from '@/components/ui/dropdown-menu';
 import {
@@ -26,9 +27,9 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 
 const statusTranslations: { [key in Server['status']]: string } = {
-  online: 'trực tuyến',
-  warning: 'cảnh báo',
-  offline: 'ngoại tuyến',
+  online: 'Trực tuyến',
+  warning: 'Cảnh báo',
+  offline: 'Ngoại tuyến',
 };
 
 const PasswordCell = ({ password }: { password?: string }) => {
@@ -48,9 +49,18 @@ const PasswordCell = ({ password }: { password?: string }) => {
 
 export default function ServersPage() {
   const [servers, setServers] = useState(initialServers);
+  const [searchTerm, setSearchTerm] = useState('');
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [editingServer, setEditingServer] = useState<Server | null>(null);
   const [serverToDelete, setServerToDelete] = useState<Server | null>(null);
+
+  const filteredServers = useMemo(() => {
+    return servers.filter(server =>
+      server.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      server.ip.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      server.user.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  }, [servers, searchTerm]);
   
   const handleAdd = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -95,15 +105,29 @@ export default function ServersPage() {
   return (
     <>
       <Card>
-        <CardHeader className="flex-row items-center justify-between">
-          <div>
-            <CardTitle>Trạng thái máy chủ</CardTitle>
-            <CardDescription>Theo dõi trạng thái máy chủ, sử dụng tài nguyên và các chỉ số hiệu suất.</CardDescription>
-          </div>
-          <Button onClick={() => setIsAddDialogOpen(true)}>
-              <PlusCircle className="mr-2 h-4 w-4" />
-              Thêm máy chủ
-          </Button>
+        <CardHeader>
+             <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                    <CardTitle>Trạng thái máy chủ</CardTitle>
+                    <CardDescription>Theo dõi trạng thái máy chủ, sử dụng tài nguyên và các chỉ số hiệu suất.</CardDescription>
+                </div>
+                <div className="flex gap-2">
+                    <div className="relative">
+                        <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                        <Input
+                            type="search"
+                            placeholder="Tìm kiếm máy chủ..."
+                            className="pl-8 sm:w-[200px] md:w-[300px]"
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                        />
+                    </div>
+                    <Button onClick={() => setIsAddDialogOpen(true)}>
+                        <PlusCircle className="mr-2 h-4 w-4" />
+                        Thêm máy chủ
+                    </Button>
+                </div>
+            </div>
         </CardHeader>
         <CardContent>
           <Table>
@@ -120,10 +144,10 @@ export default function ServersPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {servers.map((server) => (
+              {filteredServers.map((server) => (
                 <TableRow key={server.id}>
                   <TableCell>
-                    <Badge variant={getStatusBadgeVariant(server.status)} className="flex items-center gap-2">
+                    <Badge variant={getStatusBadgeVariant(server.status)} className="flex items-center gap-2 capitalize">
                       <Circle className={cn("w-2 h-2 fill-current", getStatusColor(server.status))} />
                       {statusTranslations[server.status]}
                     </Badge>
@@ -165,7 +189,7 @@ export default function ServersPage() {
                       <DropdownMenuContent align="end">
                         <DropdownMenuLabel>Hành động</DropdownMenuLabel>
                         <DropdownMenuItem onClick={() => setEditingServer(server)}>Chỉnh sửa</DropdownMenuItem>
-                        <DropdownMenuItem onSelect={(e) => e.preventDefault()} onClick={() => setServerToDelete(server)} className="text-destructive hover:text-destructive">Xóa</DropdownMenuItem>
+                        <DropdownMenuItem onSelect={(e) => e.preventDefault()} onClick={() => setServerToDelete(server)} className="text-destructive focus:text-destructive focus:bg-destructive/10">Xóa</DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </TableCell>
