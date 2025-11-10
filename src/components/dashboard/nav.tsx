@@ -7,6 +7,7 @@ import {
   FileCode2,
   StickyNote,
   Bot,
+  Globe,
 } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
@@ -24,6 +25,7 @@ import { Separator } from '@/components/ui/separator';
 const navItems = [
   { href: '/', label: 'Bảng điều khiển', icon: LayoutDashboard },
   { href: '/servers', label: 'Máy chủ', icon: Server },
+  { href: '/domains', label: 'Tên miền', icon: Globe },
   { href: '/tasks', label: 'Báo cáo cuối ngày', icon: ClipboardList },
   { href: '/templates', label: 'Mẫu', icon: FileCode2 },
   { href: '/notes', label: 'Ghi chú Code', icon: StickyNote },

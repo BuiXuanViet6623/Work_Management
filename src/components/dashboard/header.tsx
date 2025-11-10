@@ -18,9 +18,10 @@ import { LogOut, Settings } from 'lucide-react';
 const pageTitles: { [key: string]: string } = {
   '/': 'Tổng quan Bảng điều khiển',
   '/servers': 'Quản lý Máy chủ',
-  '/tasks': 'Báo cáo công việc cuối ngày',
+  '/tasks': 'Báo cáo cuối ngày',
   '/templates': 'Mẫu & AI Hub',
   '/notes': 'Ghi chú Code Snippet',
+  '/domains': 'Quản lý Tên miền',
 };
 
 export default function Header() {

@@ -1,16 +1,36 @@
+'use client';
+
 import { servers, type Server } from '@/lib/data';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { cn } from '@/lib/utils';
-import { Circle } from 'lucide-react';
+import { Circle, EyeOff, Eye } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { useState } from 'react';
+import CopyButton from '@/components/dashboard/copy-button';
 
 const statusTranslations: { [key in Server['status']]: string } = {
   online: 'trực tuyến',
   warning: 'cảnh báo',
   offline: 'ngoại tuyến',
 };
+
+const PasswordCell = ({ password }: { password?: string }) => {
+    const [show, setShow] = useState(false);
+    if(!password) return <TableCell className="text-muted-foreground">N/A</TableCell>;
+    return (
+        <TableCell>
+            <div className="flex items-center gap-2">
+                <span>{show ? password : '••••••••'}</span>
+                <Button variant="ghost" size="icon" className="w-8 h-8" onClick={() => setShow(!show)}>
+                    {show ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </Button>
+            </div>
+        </TableCell>
+    )
+}
 
 export default function ServersPage() {
   const getStatusBadgeVariant = (status: 'online' | 'warning' | 'offline'): 'default' | 'destructive' | 'secondary' => {
@@ -42,11 +62,13 @@ export default function ServersPage() {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className="w-[100px]">Trạng thái</TableHead>
+              <TableHead className="w-[120px]">Trạng thái</TableHead>
               <TableHead>Tên máy chủ</TableHead>
+              <TableHead>Địa chỉ IP</TableHead>
+              <TableHead>Tên đăng nhập</TableHead>
+              <TableHead>Mật khẩu</TableHead>
               <TableHead>Sử dụng CPU</TableHead>
               <TableHead>Sử dụng RAM</TableHead>
-              <TableHead>Lưu trữ</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -60,21 +82,28 @@ export default function ServersPage() {
                 </TableCell>
                 <TableCell className="font-medium">{server.name}</TableCell>
                 <TableCell>
+                    <div className="flex items-center gap-1">
+                        {server.ip}
+                        <CopyButton textToCopy={server.ip} />
+                    </div>
+                </TableCell>
+                <TableCell>
+                    <div className="flex items-center gap-1">
+                        {server.user}
+                        <CopyButton textToCopy={server.user} />
+                    </div>
+                </TableCell>
+                <PasswordCell password="password" />
+                <TableCell>
                   <div className="flex items-center gap-2">
-                    <Progress value={server.cpuUsage} className="h-2 w-24" />
-                    <span>{server.cpuUsage}%</span>
+                    <Progress value={server.cpuUsage} className="h-2 w-20" />
+                    <span className="text-muted-foreground">{server.cpuUsage}%</span>
                   </div>
                 </TableCell>
                 <TableCell>
                   <div className="flex items-center gap-2">
-                    <Progress value={server.ramUsage} className="h-2 w-24" />
-                    <span>{server.ramUsage}%</span>
-                  </div>
-                </TableCell>
-                <TableCell>
-                  <div className="flex items-center gap-2">
-                    <Progress value={server.storageUsage} className="h-2 w-24" />
-                    <span>{server.storageUsage}%</span>
+                    <Progress value={server.ramUsage} className="h-2 w-20" />
+                    <span className="text-muted-foreground">{server.ramUsage}%</span>
                   </div>
                 </TableCell>
               </TableRow>
