@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState } from 'react';
@@ -8,11 +7,12 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Bot, TriangleAlert } from 'lucide-react';
+import { Bot, TriangleAlert, Eye, EyeOff } from 'lucide-react';
 
 export default function LoginPage() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const router = useRouter();
 
@@ -50,16 +50,27 @@ export default function LoginPage() {
                 required
               />
             </div>
-            <div className="space-y-2">
+            <div className="relative space-y-2">
               <Label htmlFor="password">Mật khẩu</Label>
               <Input
                 id="password"
-                type="password"
+                type={showPassword ? 'text' : 'password'}
                 placeholder="••••••••"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
+                className="pr-10"
               />
+              <Button 
+                type="button" 
+                variant="ghost" 
+                size="icon" 
+                className="absolute right-1 top-7 h-7 w-7"
+                onClick={() => setShowPassword(!showPassword)}
+                >
+                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  <span className="sr-only">{showPassword ? 'Ẩn mật khẩu' : 'Hiển thị mật khẩu'}</span>
+              </Button>
             </div>
              {error && (
               <Alert variant="destructive" className="p-2">
@@ -75,7 +86,7 @@ export default function LoginPage() {
           </form>
         </CardContent>
         <CardFooter>
-            <p className="text-xs text-center text-muted-foreground w-full">© 2024 TaskMaster Pro</p>
+            <p className="w-full text-xs text-center text-muted-foreground">© {new Date().getFullYear()} TaskMaster Pro</p>
         </CardFooter>
       </Card>
     </div>
