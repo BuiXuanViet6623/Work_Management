@@ -1,3 +1,8 @@
+
+'use client';
+
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import Header from '@/components/dashboard/header';
 import Nav from '@/components/dashboard/nav';
 import { SidebarProvider, Sidebar, SidebarInset } from '@/components/ui/sidebar';
@@ -7,6 +12,15 @@ export default function DashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const router = useRouter();
+
+  useEffect(() => {
+    const isAuthenticated = sessionStorage.getItem('isAuthenticated') === 'true';
+    if (!isAuthenticated) {
+      router.replace('/login');
+    }
+  }, [router]);
+
   return (
     <SidebarProvider>
       <Sidebar>

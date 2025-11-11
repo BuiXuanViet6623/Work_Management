@@ -23,11 +23,11 @@ import {
 import { Separator } from '@/components/ui/separator';
 
 const navItems = [
-  { href: '/', label: 'Bảng điều khiển', icon: LayoutDashboard },
-  { href: '/servers', label: 'Máy chủ', icon: Server },
-  { href: '/domains', label: 'Tên miền', icon: Globe },
-  { href: '/tasks', label: 'Báo cáo cuối ngày', icon: ClipboardList },
-  { href: '/notes', label: 'Ghi chú Code', icon: StickyNote },
+  { href: '/dashboard', label: 'Bảng điều khiển', icon: LayoutDashboard },
+  { href: '/dashboard/servers', label: 'Máy chủ', icon: Server },
+  { href: '/dashboard/domains', label: 'Tên miền', icon: Globe },
+  { href: '/dashboard/tasks', label: 'Báo cáo cuối ngày', icon: ClipboardList },
+  { href: '/dashboard/notes', label: 'Ghi chú Code', icon: StickyNote },
 ];
 
 export default function Nav() {
