@@ -20,7 +20,6 @@ import {
   SidebarContent,
   SidebarFooter,
 } from '@/components/ui/sidebar';
-import { Separator } from '@/components/ui/separator';
 
 const navItems = [
   { href: '/dashboard', label: 'Bảng điều khiển', icon: LayoutDashboard },
@@ -36,16 +35,15 @@ export default function Nav() {
   return (
     <>
       <SidebarHeader>
-        <div className="flex items-center gap-2 p-2">
+        <div className="flex items-center gap-2 p-4">
           <Bot className="w-8 h-8 text-primary" />
           <span className="text-lg font-semibold text-sidebar-foreground">
             TaskMaster Pro
           </span>
         </div>
       </SidebarHeader>
-      <Separator />
       <SidebarContent>
-        <SidebarMenu className="w-full">
+        <SidebarMenu className="w-full p-4">
           {navItems.map((item) => (
             <SidebarMenuItem key={item.href}>
               <Link href={item.href} legacyBehavior passHref>
@@ -66,7 +64,7 @@ export default function Nav() {
         </SidebarMenu>
       </SidebarContent>
       <SidebarFooter>
-        <div className="p-2 text-xs text-center text-sidebar-foreground/50">
+        <div className="p-4 text-xs text-center text-sidebar-foreground/50">
           © 2024 TaskMaster Pro
         </div>
       </SidebarFooter>
