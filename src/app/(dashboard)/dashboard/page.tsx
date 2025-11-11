@@ -1,3 +1,4 @@
+
 'use client';
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -35,26 +36,23 @@ const overviewItems = [
 
 export default function DashboardPage() {
   return (
-    <div className="grid grid-cols-1 gap-6 md:grid-cols-4">
-        <div className="grid gap-6 md:col-span-3">
-            <div className="grid gap-6 md:grid-cols-2">
-                {overviewItems.map((item) => (
-                     <Link href={item.href} key={item.title}>
-                        <Card className="transition-all hover:shadow-md hover:-translate-y-1">
-                            <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-                                <CardTitle className="text-sm font-medium">{item.title}</CardTitle>
-                                <item.icon className="w-5 h-5 text-muted-foreground" />
-                            </CardHeader>
-                            <CardContent>
-                                <div className="text-2xl font-bold">{item.count}</div>
-                            </CardContent>
-                        </Card>
-                     </Link>
-                ))}
-            </div>
-            {/* Add more cards or main content here */}
+    <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+        <div className="grid col-span-1 gap-6 lg:col-span-2 md:grid-cols-2">
+            {overviewItems.map((item) => (
+                 <Link href={item.href} key={item.title}>
+                    <Card className="transition-all hover:shadow-md hover:-translate-y-1">
+                        <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
+                            <CardTitle className="text-sm font-medium">{item.title}</CardTitle>
+                            <item.icon className="w-5 h-5 text-muted-foreground" />
+                        </CardHeader>
+                        <CardContent>
+                            <div className="text-2xl font-bold">{item.count}</div>
+                        </CardContent>
+                    </Card>
+                 </Link>
+            ))}
         </div>
-        <div className="md:col-span-1">
+        <div className="col-span-1">
             <Card>
                 <CardHeader>
                     <CardTitle>Tổng quan hệ thống</CardTitle>
