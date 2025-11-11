@@ -95,14 +95,12 @@ export type Domain = {
   id: string;
   name: string;
   provider: string;
-  registrationDate: string;
-  expiryDate: string;
-  status: 'active' | 'expired' | 'expiring_soon';
+  status: 'active' | 'inactive';
 };
 
 export const domains: Domain[] = [
-  { id: 'domain-1', name: 'taskmaster.pro', provider: 'Google Domains', registrationDate: '2023-01-15', expiryDate: '2025-01-15', status: 'active' },
-  { id: 'domain-2', name: 'my-cool-app.com', provider: 'Namecheap', registrationDate: '2022-06-20', expiryDate: '2024-09-20', status: 'expiring_soon' },
-  { id: 'domain-3', name: 'legacy-project.io', provider: 'GoDaddy', registrationDate: '2021-03-10', expiryDate: '2024-03-10', status: 'expired' },
-  { id: 'domain-4', name: 'dev-playground.net', provider: 'Cloudflare', registrationDate: '2024-05-01', expiryDate: '2025-05-01', status: 'active' },
+  { id: 'domain-1', name: 'taskmaster.pro', provider: 'Google Domains', status: 'active' },
+  { id: 'domain-2', name: 'my-cool-app.com', provider: 'Namecheap', status: 'active' },
+  { id: 'domain-3', name: 'legacy-project.io', provider: 'GoDaddy', status: 'inactive' },
+  { id: 'domain-4', name: 'dev-playground.net', provider: 'Cloudflare', status: 'active' },
 ];

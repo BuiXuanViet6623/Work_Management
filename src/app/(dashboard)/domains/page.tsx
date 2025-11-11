@@ -32,32 +32,13 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 
 const statusTranslations: { [key in Domain['status']]: string } = {
   active: 'Hoạt động',
-  expiring_soon: 'Sắp hết hạn',
-  expired: 'Đã hết hạn',
+  inactive: 'Không hoạt động',
 };
 
-const statusVariants: { [key in Domain['status']]: 'default' | 'secondary' | 'destructive' } = {
+const statusVariants: { [key in Domain['status']]: 'default' | 'destructive' } = {
     active: 'default',
-    expiring_soon: 'secondary',
-    expired: 'destructive',
+    inactive: 'destructive',
 };
-
-const formatDate = (dateString: string) => {
-    try {
-        return new Date(dateString).toISOString().split('T')[0];
-    } catch (e) {
-        return dateString;
-    }
-}
-
-const formatDisplayDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('vi-VN', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-    });
-}
-
 
 export default function DomainsPage() {
   const [domains, setDomains] = useState(initialDomains);
@@ -80,8 +61,6 @@ export default function DomainsPage() {
       id: `domain-${Date.now()}`,
       name: formData.get('name') as string,
       provider: formData.get('provider') as string,
-      registrationDate: formData.get('registrationDate') as string,
-      expiryDate: formData.get('expiryDate') as string,
       status: formData.get('status') as Domain['status'],
     };
     setDomains([newDomain, ...domains]);
@@ -97,8 +76,6 @@ export default function DomainsPage() {
       ...editingDomain,
       name: formData.get('name') as string,
       provider: formData.get('provider') as string,
-      registrationDate: formData.get('registrationDate') as string,
-      expiryDate: formData.get('expiryDate') as string,
       status: formData.get('status') as Domain['status'],
     };
     
@@ -146,8 +123,6 @@ export default function DomainsPage() {
             <TableRow>
               <TableHead>Tên miền</TableHead>
               <TableHead>Nhà cung cấp</TableHead>
-              <TableHead>Ngày đăng ký</TableHead>
-              <TableHead>Ngày hết hạn</TableHead>
               <TableHead>Trạng thái</TableHead>
               <TableHead><span className="sr-only">Hành động</span></TableHead>
             </TableRow>
@@ -157,8 +132,6 @@ export default function DomainsPage() {
               <TableRow key={domain.id}>
                 <TableCell className="font-medium">{domain.name}</TableCell>
                 <TableCell>{domain.provider}</TableCell>
-                <TableCell>{formatDisplayDate(domain.registrationDate)}</TableCell>
-                <TableCell>{formatDisplayDate(domain.expiryDate)}</TableCell>
                 <TableCell>
                   <Badge variant={statusVariants[domain.status]}>
                     {statusTranslations[domain.status]}
@@ -174,7 +147,6 @@ export default function DomainsPage() {
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
                       <DropdownMenuLabel>Hành động</DropdownMenuLabel>
-                      <DropdownMenuItem onClick={() => alert('Chức năng "Gia hạn" đang được phát triển.')}>Gia hạn</DropdownMenuItem>
                       <DropdownMenuItem onClick={() => setEditingDomain(domain)}>Chỉnh sửa</DropdownMenuItem>
                        <DropdownMenuItem onSelect={(e) => e.preventDefault()} onClick={() => setDomainToDelete(domain)} className="text-destructive focus:text-destructive focus:bg-destructive/10">Xóa</DropdownMenuItem>
                     </DropdownMenuContent>
@@ -205,14 +177,6 @@ export default function DomainsPage() {
                 <Input id="provider" name="provider" className="col-span-3" required />
               </div>
               <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="registrationDate" className="text-right">Ngày đăng ký</Label>
-                <Input id="registrationDate" name="registrationDate" type="date" className="col-span-3" required />
-              </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="expiryDate" className="text-right">Ngày hết hạn</Label>
-                <Input id="expiryDate" name="expiryDate" type="date" className="col-span-3" required />
-              </div>
-              <div className="grid grid-cols-4 items-center gap-4">
                 <Label htmlFor="status" className="text-right">Trạng thái</Label>
                  <Select name="status" required>
                     <SelectTrigger className="col-span-3">
@@ -220,8 +184,7 @@ export default function DomainsPage() {
                     </SelectTrigger>
                     <SelectContent>
                         <SelectItem value="active">Hoạt động</SelectItem>
-                        <SelectItem value="expiring_soon">Sắp hết hạn</SelectItem>
-                        <SelectItem value="expired">Đã hết hạn</SelectItem>
+                        <SelectItem value="inactive">Không hoạt động</SelectItem>
                     </SelectContent>
                 </Select>
               </div>
@@ -253,14 +216,6 @@ export default function DomainsPage() {
                 <Input id="provider-edit" name="provider" className="col-span-3" defaultValue={editingDomain?.provider} required />
               </div>
               <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="registrationDate-edit" className="text-right">Ngày đăng ký</Label>
-                <Input id="registrationDate-edit" name="registrationDate" type="date" className="col-span-3" defaultValue={formatDate(editingDomain?.registrationDate ?? '')} required />
-              </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="expiryDate-edit" className="text-right">Ngày hết hạn</Label>
-                <Input id="expiryDate-edit" name="expiryDate" type="date" className="col-span-3" defaultValue={formatDate(editingDomain?.expiryDate ?? '')} required />
-              </div>
-              <div className="grid grid-cols-4 items-center gap-4">
                 <Label htmlFor="status-edit" className="text-right">Trạng thái</Label>
                  <Select name="status" defaultValue={editingDomain?.status} required>
                     <SelectTrigger className="col-span-3">
@@ -268,8 +223,7 @@ export default function DomainsPage() {
                     </SelectTrigger>
                     <SelectContent>
                         <SelectItem value="active">Hoạt động</SelectItem>
-                        <SelectItem value="expiring_soon">Sắp hết hạn</SelectItem>
-                        <SelectItem value="expired">Đã hết hạn</SelectItem>
+                        <SelectItem value="inactive">Không hoạt động</SelectItem>
                     </SelectContent>
                 </Select>
               </div>
