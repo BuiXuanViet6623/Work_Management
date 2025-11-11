@@ -131,7 +131,7 @@ export default function DomainsPage() {
             {filteredDomains.map((domain) => (
               <TableRow key={domain.id}>
                 <TableCell className="font-medium">
-                  <a href={`//${domain.name}`} target="_blank" rel="noopener noreferrer" className="hover:underline">
+                  <a href={`//${domain.name}`} target="_blank" rel="noopener noreferrer">
                     {domain.name}
                   </a>
                 </TableCell>
