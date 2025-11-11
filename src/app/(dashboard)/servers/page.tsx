@@ -155,7 +155,9 @@ export default function ServersPage() {
                   <TableCell className="font-medium">{server.name}</TableCell>
                   <TableCell>
                       <div className="flex items-center gap-1">
-                          {server.ip}
+                          <a href={`http://${server.ip}`} target="_blank" rel="noopener noreferrer" className="hover:underline">
+                            {server.ip}
+                          </a>
                           <CopyButton textToCopy={server.ip} />
                       </div>
                   </TableCell>

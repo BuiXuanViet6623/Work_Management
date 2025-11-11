@@ -130,7 +130,11 @@ export default function DomainsPage() {
           <TableBody>
             {filteredDomains.map((domain) => (
               <TableRow key={domain.id}>
-                <TableCell className="font-medium">{domain.name}</TableCell>
+                <TableCell className="font-medium">
+                  <a href={`//${domain.name}`} target="_blank" rel="noopener noreferrer" className="hover:underline">
+                    {domain.name}
+                  </a>
+                </TableCell>
                 <TableCell>{domain.provider}</TableCell>
                 <TableCell>
                   <Badge variant={statusVariants[domain.status]}>
