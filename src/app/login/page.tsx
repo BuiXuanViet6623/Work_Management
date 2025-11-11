@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState } from 'react';
@@ -7,24 +8,31 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Bot, TriangleAlert, Eye, EyeOff } from 'lucide-react';
+import { Bot, TriangleAlert, Eye, EyeOff, Loader2 } from 'lucide-react';
 
 export default function LoginPage() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    if (username === 'admin' && password === 'XuanViet23@') {
-      setError('');
-      sessionStorage.setItem('isAuthenticated', 'true');
-      router.replace('/dashboard');
-    } else {
-      setError('Tên đăng nhập hoặc mật khẩu không chính xác.');
-    }
+    setIsLoading(true);
+    setError('');
+
+    // Simulate network delay
+    setTimeout(() => {
+      if (username === 'admin' && password === 'XuanViet23@') {
+        sessionStorage.setItem('isAuthenticated', 'true');
+        router.replace('/dashboard');
+      } else {
+        setError('Tên đăng nhập hoặc mật khẩu không chính xác.');
+        setIsLoading(false);
+      }
+    }, 1000);
   };
 
   return (
@@ -48,6 +56,7 @@ export default function LoginPage() {
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 required
+                disabled={isLoading}
               />
             </div>
             <div className="relative space-y-2">
@@ -60,6 +69,7 @@ export default function LoginPage() {
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 className="pr-10"
+                disabled={isLoading}
               />
               <Button 
                 type="button" 
@@ -67,6 +77,7 @@ export default function LoginPage() {
                 size="icon" 
                 className="absolute right-1 top-7 h-7 w-7"
                 onClick={() => setShowPassword(!showPassword)}
+                disabled={isLoading}
                 >
                   {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                   <span className="sr-only">{showPassword ? 'Ẩn mật khẩu' : 'Hiển thị mật khẩu'}</span>
@@ -80,8 +91,8 @@ export default function LoginPage() {
                 </div>
               </Alert>
             )}
-            <Button type="submit" className="w-full">
-              Đăng nhập
+            <Button type="submit" className="w-full" disabled={isLoading}>
+              {isLoading ? <Loader2 className="animate-spin" /> : 'Đăng nhập'}
             </Button>
           </form>
         </CardContent>

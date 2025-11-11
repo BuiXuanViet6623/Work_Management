@@ -14,6 +14,7 @@ import { SidebarTrigger } from '@/components/ui/sidebar';
 import { usePathname, useRouter } from 'next/navigation';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { LogOut, Settings } from 'lucide-react';
+import PageSpinner from '@/components/ui/page-spinner';
 
 const pageTitles: { [key: string]: string } = {
   '/dashboard': 'Tổng quan Bảng điều khiển',
@@ -35,6 +36,7 @@ export default function Header() {
 
   return (
     <header className="sticky top-0 z-10 flex items-center h-16 px-4 bg-background/80 backdrop-blur-sm border-b shrink-0 md:px-6">
+      <PageSpinner />
       <div className="md:hidden">
         <SidebarTrigger />
       </div>
