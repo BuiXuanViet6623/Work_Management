@@ -1,20 +1,31 @@
 
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 export default function RootPage() {
   const router = useRouter();
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
 
   useEffect(() => {
-    const isAuthenticated = sessionStorage.getItem('isAuthenticated') === 'true';
+    // Check for authentication status only on the client side
+    setIsAuthenticated(sessionStorage.getItem('isAuthenticated') === 'true');
+  }, []);
+
+  useEffect(() => {
+    // Wait until authentication status is determined
+    if (isAuthenticated === null) {
+      return; // Still loading
+    }
+
     if (isAuthenticated) {
       router.replace('/dashboard');
     } else {
       router.replace('/login');
     }
-  }, [router]);
+  }, [isAuthenticated, router]);
 
-  return null; 
+  // Return null or a loading spinner while redirecting
+  return null;
 }
