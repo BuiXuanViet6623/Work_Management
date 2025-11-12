@@ -22,6 +22,7 @@ const pageTitles: { [key: string]: string } = {
   '/dashboard/tasks': 'Báo cáo cuối ngày',
   '/dashboard/notes': 'Ghi chú Code Snippet',
   '/dashboard/domains': 'Quản lý Tên miền',
+  '/dashboard/system-check': 'Kiểm tra hệ thống'
 };
 
 export default function Header() {

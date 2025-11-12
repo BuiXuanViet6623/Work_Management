@@ -8,6 +8,7 @@ import {
   StickyNote,
   Bot,
   Globe,
+  ShieldCheck,
 } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
@@ -27,6 +28,7 @@ const navItems = [
   { href: '/dashboard/domains', label: 'Tên miền', icon: Globe },
   { href: '/dashboard/tasks', label: 'Báo cáo cuối ngày', icon: ClipboardList },
   { href: '/dashboard/notes', label: 'Ghi chú Code', icon: StickyNote },
+  { href: '/dashboard/system-check', label: 'Kiểm tra hệ thống', icon: ShieldCheck },
 ];
 
 export default function Nav() {
