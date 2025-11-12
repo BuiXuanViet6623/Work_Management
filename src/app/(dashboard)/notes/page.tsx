@@ -109,7 +109,7 @@ export default function NotesPage() {
                   </CardDescription>
               </CardHeader>
               <CardContent className="flex-grow">
-                  <pre className="p-3 h-full text-sm rounded-md bg-muted text-muted-foreground overflow-x-auto">
+                  <pre className="p-3 h-40 text-sm rounded-md bg-muted text-muted-foreground overflow-auto">
                   <code>{note.content}</code>
                   </pre>
               </CardContent>
