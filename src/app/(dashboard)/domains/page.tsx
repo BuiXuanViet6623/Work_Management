@@ -119,7 +119,7 @@ export default function DomainsPage() {
             <Card key={domain.id} className="relative flex flex-col">
               <CardHeader>
                   <CardTitle className="truncate">
-                    <a href={`//${domain.name}`} target="_blank" rel="noopener noreferrer">
+                    <a href={`//${domain.name}`} target="_blank" rel="noopener noreferrer" className="hover:text-primary">
                         {domain.name}
                     </a>
                   </CardTitle>
