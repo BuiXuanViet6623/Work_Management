@@ -3,7 +3,6 @@
 
 import { domains as initialDomains, type Domain } from '@/lib/data';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { MoreHorizontal, PlusCircle, Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -92,12 +91,11 @@ export default function DomainsPage() {
 
   return (
     <>
-    <Card>
-      <CardHeader>
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+    <div>
+        <div className="flex flex-col gap-4 mb-6 sm:flex-row sm:items-center sm:justify-between">
             <div>
-                <CardTitle>Quản lý Tên miền</CardTitle>
-                <CardDescription>Theo dõi tất cả các tên miền đã đăng ký của bạn.</CardDescription>
+                <h1 className="text-2xl font-bold tracking-tight">Quản lý Tên miền</h1>
+                <p className="text-muted-foreground">Theo dõi và xem trước các tên miền của bạn.</p>
             </div>
             <div className="flex gap-2">
                 <div className="relative">
@@ -116,52 +114,55 @@ export default function DomainsPage() {
                 </Button>
             </div>
         </div>
-      </CardHeader>
-      <CardContent>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Tên miền</TableHead>
-              <TableHead>Nhà cung cấp</TableHead>
-              <TableHead>Trạng thái</TableHead>
-              <TableHead><span className="sr-only">Hành động</span></TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {filteredDomains.map((domain) => (
-              <TableRow key={domain.id}>
-                <TableCell className="font-medium">
-                  <a href={`//${domain.name}`} target="_blank" rel="noopener noreferrer">
-                    {domain.name}
-                  </a>
-                </TableCell>
-                <TableCell>{domain.provider}</TableCell>
-                <TableCell>
-                  <Badge variant={statusVariants[domain.status]}>
-                    {statusTranslations[domain.status]}
-                  </Badge>
-                </TableCell>
-                <TableCell>
-                <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button aria-haspopup="true" size="icon" variant="ghost">
-                        <MoreHorizontal className="h-4 w-4" />
-                        <span className="sr-only">Toggle menu</span>
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      <DropdownMenuLabel>Hành động</DropdownMenuLabel>
-                      <DropdownMenuItem onClick={() => setEditingDomain(domain)}>Chỉnh sửa</DropdownMenuItem>
-                       <DropdownMenuItem onSelect={(e) => e.preventDefault()} onClick={() => setDomainToDelete(domain)} className="text-destructive focus:text-destructive focus:bg-destructive/10">Xóa</DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </CardContent>
-    </Card>
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        {filteredDomains.map((domain) => (
+            <Card key={domain.id} className="relative flex flex-col">
+              <CardHeader>
+                  <CardTitle className="truncate">
+                    <a href={`//${domain.name}`} target="_blank" rel="noopener noreferrer">
+                        {domain.name}
+                    </a>
+                  </CardTitle>
+                  <CardDescription>
+                    Nhà cung cấp: {domain.provider}
+                  </CardDescription>
+              </CardHeader>
+              <CardContent className="flex-grow space-y-4">
+                  <div className="aspect-[4/3] w-full bg-muted rounded-md overflow-hidden border">
+                      <iframe
+                        src={`//${domain.name}`}
+                        className="w-full h-full"
+                        sandbox="allow-scripts allow-same-origin"
+                        loading="lazy"
+                        title={domain.name}
+                      />
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <Badge variant={statusVariants[domain.status]}>
+                        {statusTranslations[domain.status]}
+                    </Badge>
+                  </div>
+              </CardContent>
+              <div className="absolute top-4 right-4">
+                  <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button aria-haspopup="true" size="icon" variant="ghost">
+                          <MoreHorizontal className="h-4 w-4" />
+                          <span className="sr-only">Toggle menu</span>
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuLabel>Hành động</DropdownMenuLabel>
+                        <DropdownMenuItem onClick={() => setEditingDomain(domain)}>Chỉnh sửa</DropdownMenuItem>
+                        <DropdownMenuItem onSelect={(e) => e.preventDefault()} onClick={() => setDomainToDelete(domain)} className="text-destructive focus:text-destructive focus:bg-destructive/10">Xóa</DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+              </div>
+            </Card>
+        ))}
+        </div>
+    </div>
+
 
     {/* Add/Edit Dialogs */}
     <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
@@ -259,3 +260,5 @@ export default function DomainsPage() {
     </>
   );
 }
+
+    
