@@ -14,6 +14,7 @@ import { SidebarTrigger } from '@/components/ui/sidebar';
 import { usePathname, useRouter } from 'next/navigation';
 import { LogOut, Settings } from 'lucide-react';
 import PageSpinner from '@/components/ui/page-spinner';
+import { PlaceHolderImages } from '@/lib/placeholder-images';
 
 const pageTitles: { [key: string]: string } = {
   '/dashboard': 'Tổng quan Bảng điều khiển',
@@ -33,6 +34,8 @@ export default function Header() {
     router.replace('/login');
   };
 
+  const codingAvatar = PlaceHolderImages.find(img => img.id === 'coding-avatar');
+
   return (
     <header className="sticky top-0 z-10 flex items-center h-16 px-4 bg-background/80 backdrop-blur-sm border-b shrink-0 md:px-6">
       <PageSpinner />
@@ -48,6 +51,7 @@ export default function Header() {
             <DropdownMenuTrigger asChild>
               <button className="transition-transform rounded-full hover:scale-105">
                 <Avatar className="w-9 h-9">
+                  {codingAvatar && <AvatarImage src={codingAvatar.imageUrl} alt={codingAvatar.description} data-ai-hint={codingAvatar.imageHint} />}
                   <AvatarFallback>TM</AvatarFallback>
                 </Avatar>
               </button>
