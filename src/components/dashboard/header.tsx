@@ -12,7 +12,6 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { SidebarTrigger } from '@/components/ui/sidebar';
 import { usePathname, useRouter } from 'next/navigation';
-import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { LogOut, Settings } from 'lucide-react';
 import PageSpinner from '@/components/ui/page-spinner';
 
@@ -28,7 +27,6 @@ const pageTitles: { [key: string]: string } = {
 export default function Header() {
   const pathname = usePathname();
   const router = useRouter();
-  const avatarImage = PlaceHolderImages.find(p => p.id === 'user-avatar-1');
 
   const handleLogout = () => {
     sessionStorage.removeItem('isAuthenticated');
@@ -50,7 +48,6 @@ export default function Header() {
             <DropdownMenuTrigger asChild>
               <button className="transition-transform rounded-full hover:scale-105">
                 <Avatar className="w-9 h-9">
-                   {avatarImage && <AvatarImage src={avatarImage.imageUrl} alt="User Avatar" data-ai-hint={avatarImage.imageHint} />}
                   <AvatarFallback>TM</AvatarFallback>
                 </Avatar>
               </button>
