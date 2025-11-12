@@ -18,11 +18,11 @@ import { PlaceHolderImages } from '@/lib/placeholder-images';
 
 const pageTitles: { [key: string]: string } = {
   '/dashboard': 'Tổng quan Bảng điều khiển',
-  '/dashboard/servers': 'Quản lý Máy chủ',
-  '/dashboard/tasks': 'Báo cáo cuối ngày',
-  '/dashboard/notes': 'Ghi chú Code Snippet',
-  '/dashboard/domains': 'Quản lý Tên miền',
-  '/dashboard/system-check': 'Kiểm tra hệ thống'
+  '/servers': 'Quản lý Máy chủ',
+  '/tasks': 'Báo cáo cuối ngày',
+  '/notes': 'Ghi chú Code Snippet',
+  '/domains': 'Quản lý Tên miền',
+  '/system-check': 'Kiểm tra hệ thống'
 };
 
 export default function Header() {
