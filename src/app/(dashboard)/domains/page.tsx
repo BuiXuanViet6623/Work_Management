@@ -27,7 +27,6 @@ import {
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogClose } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 const statusTranslations: { [key in Domain['status']]: string } = {
   active: 'Hoạt động',
@@ -48,8 +47,7 @@ export default function DomainsPage() {
 
   const filteredDomains = useMemo(() => {
     return domains.filter(domain =>
-      domain.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      domain.provider.toLowerCase().includes(searchTerm.toLowerCase())
+      domain.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
   }, [domains, searchTerm]);
 
@@ -59,8 +57,7 @@ export default function DomainsPage() {
     const newDomain: Domain = {
       id: `domain-${Date.now()}`,
       name: formData.get('name') as string,
-      provider: formData.get('provider') as string,
-      status: formData.get('status') as Domain['status'],
+      status: 'active', // Default to active, can be updated by a check
     };
     setDomains([newDomain, ...domains]);
     setIsAddDialogOpen(false);
@@ -74,8 +71,6 @@ export default function DomainsPage() {
     const updatedDomain: Domain = {
       ...editingDomain,
       name: formData.get('name') as string,
-      provider: formData.get('provider') as string,
-      status: formData.get('status') as Domain['status'],
     };
     
     setDomains(domains.map(d => d.id === editingDomain.id ? updatedDomain : d));
@@ -116,18 +111,15 @@ export default function DomainsPage() {
         </div>
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {filteredDomains.map((domain) => (
-            <Card key={domain.id} className="relative flex flex-col">
-              <CardHeader>
+            <Card key={domain.id} className="relative flex flex-col transition-all hover:shadow-lg">
+              <CardHeader className="pb-4">
                   <CardTitle className="truncate">
                     <a href={`//${domain.name}`} target="_blank" rel="noopener noreferrer" className="hover:text-primary">
                         {domain.name}
                     </a>
                   </CardTitle>
-                  <CardDescription>
-                    Nhà cung cấp: {domain.provider}
-                  </CardDescription>
               </CardHeader>
-              <CardContent className="flex-grow space-y-4">
+              <CardContent className="flex flex-col flex-grow space-y-4">
                   <div className="aspect-[4/3] w-full bg-muted rounded-md overflow-hidden border">
                       <iframe
                         src={`//${domain.name}`}
@@ -137,7 +129,7 @@ export default function DomainsPage() {
                         title={domain.name}
                       />
                   </div>
-                  <div className="flex items-center justify-between">
+                  <div className="flex items-center justify-between pt-2">
                     <Badge variant={statusVariants[domain.status]}>
                         {statusTranslations[domain.status]}
                     </Badge>
@@ -175,23 +167,7 @@ export default function DomainsPage() {
             <div className="grid gap-4 py-4">
               <div className="grid grid-cols-4 items-center gap-4">
                 <Label htmlFor="name" className="text-right">Tên miền</Label>
-                <Input id="name" name="name" className="col-span-3" required />
-              </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="provider" className="text-right">Nhà cung cấp</Label>
-                <Input id="provider" name="provider" className="col-span-3" required />
-              </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="status" className="text-right">Trạng thái</Label>
-                 <Select name="status" required>
-                    <SelectTrigger className="col-span-3">
-                        <SelectValue placeholder="Chọn trạng thái" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        <SelectItem value="active">Hoạt động</SelectItem>
-                        <SelectItem value="inactive">Không hoạt động</SelectItem>
-                    </SelectContent>
-                </Select>
+                <Input id="name" name="name" className="col-span-3" placeholder="example.com" required />
               </div>
             </div>
             <DialogFooter>
@@ -215,22 +191,6 @@ export default function DomainsPage() {
               <div className="grid grid-cols-4 items-center gap-4">
                 <Label htmlFor="name-edit" className="text-right">Tên miền</Label>
                 <Input id="name-edit" name="name" className="col-span-3" defaultValue={editingDomain?.name} required />
-              </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="provider-edit" className="text-right">Nhà cung cấp</Label>
-                <Input id="provider-edit" name="provider" className="col-span-3" defaultValue={editingDomain?.provider} required />
-              </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="status-edit" className="text-right">Trạng thái</Label>
-                 <Select name="status" defaultValue={editingDomain?.status} required>
-                    <SelectTrigger className="col-span-3">
-                        <SelectValue placeholder="Chọn trạng thái" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        <SelectItem value="active">Hoạt động</SelectItem>
-                        <SelectItem value="inactive">Không hoạt động</SelectItem>
-                    </SelectContent>
-                </Select>
               </div>
             </div>
             <DialogFooter>

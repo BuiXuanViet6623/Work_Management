@@ -94,13 +94,12 @@ export const reports: Report[] = [
 export type Domain = {
   id: string;
   name: string;
-  provider: string;
   status: 'active' | 'inactive';
 };
 
 export const domains: Domain[] = [
-  { id: 'domain-1', name: 'taskmaster.pro', provider: 'Google Domains', status: 'active' },
-  { id: 'domain-2', name: 'my-cool-app.com', provider: 'Namecheap', status: 'active' },
-  { id: 'domain-3', name: 'legacy-project.io', provider: 'GoDaddy', status: 'inactive' },
-  { id: 'domain-4', name: 'dev-playground.net', provider: 'Cloudflare', status: 'active' },
+  { id: 'domain-1', name: 'taskmaster.pro', status: 'active' },
+  { id: 'domain-2', name: 'my-cool-app.com', status: 'active' },
+  { id: 'domain-3', name: 'legacy-project.io', status: 'inactive' },
+  { id: 'domain-4', name: 'dev-playground.net', status: 'active' },
 ];
