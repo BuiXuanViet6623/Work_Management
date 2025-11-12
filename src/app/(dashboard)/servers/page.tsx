@@ -7,9 +7,9 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { cn } from '@/lib/utils';
-import { Circle, EyeOff, Eye, MoreHorizontal, PlusCircle, Search } from 'lucide-react';
+import { Circle, EyeOff, Eye, MoreHorizontal, PlusCircle, Search, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import CopyButton from '@/components/dashboard/copy-button';
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuLabel, DropdownMenuItem } from '@/components/ui/dropdown-menu';
 import {
@@ -49,10 +49,30 @@ const PasswordCell = ({ password }: { password?: string }) => {
 
 export default function ServersPage() {
   const [servers, setServers] = useState(initialServers);
+  const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [editingServer, setEditingServer] = useState<Server | null>(null);
   const [serverToDelete, setServerToDelete] = useState<Server | null>(null);
+
+  const checkServerStatuses = () => {
+    setIsLoading(true);
+    // Simulate API calls to check server status
+    setTimeout(() => {
+      setServers(prevServers => prevServers.map(server => {
+        // Keep some servers as they are, change others for demo purposes
+        if (server.id === 'server-5') return { ...server, status: 'offline' as const };
+        if (server.id === 'server-3') return { ...server, status: 'warning' as const };
+        return { ...server, status: 'online' as const };
+      }));
+      setIsLoading(false);
+    }, 1500);
+  };
+
+  useEffect(() => {
+    checkServerStatuses();
+  }, []);
+
 
   const filteredServers = useMemo(() => {
     return servers.filter(server =>
@@ -72,9 +92,9 @@ export default function ServersPage() {
       user: formData.get('user') as string,
       // password is not stored for security reasons in this example
       status: 'online', // Default status
-      cpuUsage: 0,
-      ramUsage: 0,
-      storageUsage: 0,
+      cpuUsage: Math.floor(Math.random() * 100),
+      ramUsage: Math.floor(Math.random() * 100),
+      storageUsage: Math.floor(Math.random() * 100),
     };
     setServers([newServer, ...servers]);
     setIsAddDialogOpen(false);
@@ -111,7 +131,7 @@ export default function ServersPage() {
                     <CardTitle>Trạng thái máy chủ</CardTitle>
                     <CardDescription>Theo dõi trạng thái máy chủ, sử dụng tài nguyên và các chỉ số hiệu suất.</CardDescription>
                 </div>
-                <div className="flex gap-2">
+                <div className="flex items-center gap-2">
                     <div className="relative">
                         <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
                         <Input
@@ -122,6 +142,10 @@ export default function ServersPage() {
                             onChange={(e) => setSearchTerm(e.target.value)}
                         />
                     </div>
+                     <Button onClick={checkServerStatuses} variant="outline" disabled={isLoading}>
+                        {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+                        Kiểm tra lại
+                    </Button>
                     <Button onClick={() => setIsAddDialogOpen(true)}>
                         <PlusCircle className="mr-2 h-4 w-4" />
                         Thêm máy chủ
@@ -130,6 +154,11 @@ export default function ServersPage() {
             </div>
         </CardHeader>
         <CardContent>
+          {isLoading && filteredServers.length === 0 ? (
+            <div className="flex items-center justify-center h-60">
+              <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+            </div>
+          ) : (
           <Table>
             <TableHeader>
               <TableRow>
@@ -155,7 +184,7 @@ export default function ServersPage() {
                   <TableCell className="font-medium">{server.name}</TableCell>
                   <TableCell>
                       <div className="flex items-center gap-1">
-                          <a href={`http://${server.ip}`} target="_blank" rel="noopener noreferrer">
+                          <a href={`http://${server.ip}`} target="_blank" rel="noopener noreferrer" className="hover:text-primary">
                             {server.ip}
                           </a>
                           <CopyButton textToCopy={server.ip} />
@@ -199,6 +228,7 @@ export default function ServersPage() {
               ))}
             </TableBody>
           </Table>
+          )}
         </CardContent>
       </Card>
 
@@ -304,3 +334,5 @@ export default function ServersPage() {
     }
   }
 }
+
+    
